@@ -1,11 +1,11 @@
-'''mermaid
-SequenceDiagram
+```mermaid
+sequenceDiagram
     participant browser
     participant server
 
     browser ->> server: POST https://studies.cs.helsinki.fi/exampleapp/new_note
     activate server
-    server -->> browser: STATUS 301 https://studies.cs.helsinki.fi/exampleapp/notes
+    server -->> browser: HTTP 302 Redirect to /exampleapp/notes
     deactivate server
 
     browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/notes
@@ -33,4 +33,4 @@ SequenceDiagram
     Note right of browser: The browser executes the callback function that renders the notes
 
 
-'''
+```
