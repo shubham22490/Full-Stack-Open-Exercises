@@ -3,6 +3,7 @@ import axios from 'axios'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
+import Notification from './components/Notification'
 import phonebookServices from './services/phonebook'
 
 
@@ -25,6 +26,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newPhone, setNewPhone] = useState('')
   const [filterLabel, setFilterLabel] = useState('')
+  const [notification, setNotification] = useState([null, ''])
   
   const personsToDisplay = persons.filter(
     (person) => person.name.toLowerCase().includes(filterLabel)
@@ -54,6 +56,15 @@ const App = () => {
     )
   }
 
+  const showMessage = (message, type='') => {
+    setNotification([message, type])
+    setTimeout(
+      () => {
+        setNotification([null, ''])
+      }, 5000
+    )
+  }
+
   const handleSubmit = (event) => {
     event.preventDefault()
     if(persons.some(person => person.name === newName)) 
@@ -63,6 +74,11 @@ const App = () => {
         phonebookServices
           .update(newPerson)
           .then(resp => setPersons(persons.map((p) => p.name === newName ? resp : p)))
+          .then(showMessage(`Updated ${newName}.`))
+          .catch((error) => {
+            showMessage(`Infomration of ${newName} has already been removed from server.`, 'error')
+          })
+        
       } else console.log("No update!")
     else {
       const data = 
@@ -76,6 +92,10 @@ const App = () => {
         .then(resp => {
             setPersons(persons.concat(resp))
           })
+        .then(showMessage(`Added ${newName}`))
+        .catch((error) => {
+            showMessage(`Infomration of ${newName} has already been removed from server.`, 'error')
+          })
     }
     setNewName('')
     setNewPhone('')
@@ -86,6 +106,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={notification[0]} type={notification[1]} />
       <Filter handlechangeFilter={handlechangeFilter} filterLabel={filterLabel} />
 
       <h2>add a new</h2>
