@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
@@ -9,7 +8,6 @@ import phonebookServices from './services/phonebook'
 
 const App = () => {
   const [persons, setPersons] = useState([])
-  const baseUrl = 'http://localhost:3001/persons'
   
   // Getting data from the server using useEffect which gets the data after rendering and rerenders once gets the data.
   const hook = () => {
@@ -18,10 +16,6 @@ const App = () => {
       .then(resp => setPersons(resp))
   }
   useEffect(hook, [])
-
-  const addNumber = (data) => {
-    return axios.post(baseUrl, data)
-  }
   
   const [newName, setNewName] = useState('')
   const [newPhone, setNewPhone] = useState('')
@@ -48,7 +42,7 @@ const App = () => {
             .remove(id)
             .then(resp => {
               console.log(resp)
-              setPersons(persons.filter((person) => person.id != id))
+              setPersons(persons.filter((person) => person.id !== id))
             })
         } else console.log(`Not deleted ${person.name}`)
         
@@ -74,9 +68,10 @@ const App = () => {
         phonebookServices
           .update(newPerson)
           .then(resp => setPersons(persons.map((p) => p.name === newName ? resp : p)))
-          .then(showMessage(`Updated ${newName}.`))
+          .then(() => showMessage(`Updated ${newName}.`))
           .catch((error) => {
             showMessage(`Infomration of ${newName} has already been removed from server.`, 'error')
+            setPersons(persons.filter(p => p.id !== person.id))
           })
         
       } else console.log("No update!")
@@ -84,15 +79,14 @@ const App = () => {
       const data = 
       {
         name: newName, 
-        number: newPhone, 
-        id: persons.length+1
+        number: newPhone
       }
       phonebookServices
         .addNumber(data)
         .then(resp => {
             setPersons(persons.concat(resp))
           })
-        .then(showMessage(`Added ${newName}`))
+        .then(() => showMessage(`Added ${newName}`))
         .catch((error) => {
             showMessage(`Infomration of ${newName} has already been removed from server.`, 'error')
           })
