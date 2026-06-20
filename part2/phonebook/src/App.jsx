@@ -88,7 +88,7 @@ const App = () => {
           })
         .then(() => showMessage(`Added ${newName}`))
         .catch((error) => {
-            showMessage(`Infomration of ${newName} has already been removed from server.`, 'error')
+            showMessage(error.response.data.error, 'error')
           })
     }
     setNewName('')
