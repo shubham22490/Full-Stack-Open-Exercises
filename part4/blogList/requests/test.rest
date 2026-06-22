@@ -1,0 +1,12 @@
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+    "title": "Second Blog",
+    "author": "Shubham Goel",
+    "url": "hello.txt",
+    "likes": 0
+}
+
+###
+GET http://localhost:3003/api/blogs
